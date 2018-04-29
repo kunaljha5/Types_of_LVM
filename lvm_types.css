@@ -1,0 +1,47 @@
+2.3. LVM Logical Volumes
+
+In LVM, a volume group is divided up into logical volumes. There are three types of LVM logical volumes: linear volumes, striped volumes, and mirrored volumes. These are described in the following sections. 
+
+2.3.1. Linear Volumes
+
+A linear volume aggregates multiple physical volumes into one logical volume. For example, if you have two 60GB disks, you can create a 120GB logical volume. The physical storage is concatenated.
+
+Creating a linear volume assigns a range of physical extents to an area of a logical volume in order. For example, as shown in Figure 2.2, “Extent Mapping” logical extents 1 to 99 could map to one
+physical volume and logical extents 100 to 198 could map to a second physical volume. From the point of view of the application, there is one device that is 198 extents in size.
+Extent Mapping
+
+Figure 2.2. Extent Mapping
+
+The physical volumes that make up a logical volume do not have to be the same size. Figure 2.3, “Linear Volume with Unequal Physical Volumes” shows volume group VG1 with a physical extent size of 4MB. 
+This volume group includes 2 physical volumes named PV1 and PV2. The physical volumes are divided into 4MB units, since that is the extent size. In this example, 
+PV1 is 100 extents in size (400MB) and PV2 is 200 extents in size (800MB). 
+You can create a linear volume any size between 1 and 300 extents (4MB to 1200MB).
+ In this example, the linear volume named LV1 is 300 extents in size. 
+ 
+ 
+2.3.2. Striped Logical Volumes
+
+When you write data to an LVM logical volume, the file system lays the data out across the underlying physical volumes. You can control the way the data is written to the physical volumes by creating a striped logical volume. For large sequential reads and writes, this can improve the efficiency of the data I/O.
+
+Striping enhances performance by writing data to a predetermined number of physical volumes in round-round fashion. With striping, I/O can be done in parallel. In some situations, this can result in near-linear performance gain for each additional physical volume in the stripe.
+
+The following illustration shows data being striped across three physical volumes. In this figure:
+
+    the first stripe of data is written to PV1
+
+    the second stripe of data is written to PV2
+
+    the third stripe of data is written to PV3
+
+    the fourth stripe of data is written to PV1
+
+In a striped logical volume, the size of the stripe cannnot exceed the size of an extent. 
+
+
+2.3.3. Mirrored Logical Volumes
+
+A mirror maintains identical copies of data on different devices. When data is written to one device, it is written to a second device as well, mirroring the data. This provides protection for device failures. When one leg of a mirror fails, 
+the logical volume becomes a linear volume and can still be accessed.
+
+LVM supports mirrored volumes. When you create a mirrored logical volume, LVM ensures that data written to an underlying physical volume is mirrored onto a separate physical volume. 
+With LVM, you can create mirrored logical volumes with multiple mirrors. 
